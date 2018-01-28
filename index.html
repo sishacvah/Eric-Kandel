@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Чем знаменит Эрик Кандел?</title>
+</head>
+<body background="img/back.jpg">
+	<div id="main">
+		<h1 id="topHeader"></h1>
+		
+		<h4 id="question"></h4>
+		<div class="pics">
+			<img src="img/que1.jpg" id="image">
+		</div>
+		<div class="answers">
+			<div id="answer1" onclick="checkAnswer(this)" onmouseover="highlight(this)" onmouseout="resetColor(this)">
+				
+				<p id = "firstAnswerText"></p>
+			</div>
+			<div id="answer2" onclick="checkAnswer(this)" onmouseover="highlight(this)" onmouseout="resetColor(this)">
+				
+				<p id = "secondAnswerText"></p>
+			</div>
+			<div id="answer3" onclick="checkAnswer(this)" onmouseover="highlight(this)" onmouseout="resetColor(this)">
+				
+				<p id = "thirdAnswerText"></p>
+			</div>
+			<div id="answer4" onclick="checkAnswer(this)" onmouseover="highlight(this)" onmouseout="resetColor(this)">
+				
+				<p id = "forthAnswerText"></p>
+			</div>
+		</div>
+
+		<button id="submit" onclick="changeQuestion()">Дальше</button>
+	</div>
+	
+	
+
+	<script type="text/javascript">
+		//Переменная для счета
+		var score = 0;
+		//Захватываем DOM объекты
+		var btn = document.getElementById("submit");
+		var quest = document.getElementById("question");
+		var image = document.getElementById("image");
+
+		var main = document.getElementById("main");
+
+		var firstAnswerText = document.getElementById("firstAnswerText");
+		var secondAnswerText = document.getElementById("secondAnswerText");
+		var thirdAnswerText = document.getElementById("thirdAnswerText");
+		var forthAnswerText = document.getElementById("forthAnswerText");
+
+		var answer1 = document.getElementById("answer1");
+		var answer2 = document.getElementById("answer2");
+		var answer3 = document.getElementById("answer3");
+		var answer4 = document.getElementById("answer4");
+		//Счетчик вопросов
+		var topHeader = document.getElementById("topHeader");
+		var topHeaderCount = 1;
+		//Флаги ответ выбран, комментарий показан
+		var answerSelected = false;
+		var commentExists = false;
+		//Переменные для комментария
+		var comment;
+		var commentText;
+		//Авторы
+		var creditsText = "";
+		//Приветственные параграфы 1, 2 и 3
+		var welcomeMessage1 = "Лауреатом Нобелевской премии 2000-ого года стал выдающийся ученый Эрик Кандел. Знаете ли вы что-нибудь о нем и о его открытии?";
+
+		var welcomeMessage2 = "К сожалению, в России об этом улыбчивом исследователе мало кто знает. А между тем, Кандел не только известный ученый, но и просто разносторонний человек. Пройдите тест, чтобы познакомиться с ним и его деятельностью поближе!";
+
+		var welcomeMessage3 = "";
+		//Текст для результатов, три варианта
+		var resultsMessageLow = "Ваши знания на начальном уровне. Советуем прочитать книгу Эрика Кандела 'В поисках памяти' для погружения в тему.";
+		var resultsMessageMedium = "Ваши знания на достаточном уровне. Советуем Вам глубже погрузиться в тему и прочитать книгу Эрика Кандела 'В поисках памяти'";
+		var resultsMessageHigh = "Поздравляем с высшим результатом! Вы наверняка читали книгу Кандела 'В поисках памяти'. Нет? Тогда обязательно прочитайте!";
+		//Надпись рядом с финальным счетом, три варианта
+		var resultsProcentMessageLow = "Эрик обычно улыбается, но не в этот раз";
+		var resultsProcentMessageMedium = "Хорошо!";
+		var resultsProcentMessageHigh = "Отлично!";
+		//Список объектов (вопросы).
+		//text - текст вопроса
+		//answer1-4 - текст ответов
+		//correctAnswer - указание верного варианта (число)
+		//image - ссылка на изображение
+		//comment1-4 - индивидуальные комментарии на каждый ответ
+		var questions = [
+			{
+				text: "В 2000 году Кандел совместно с Арвидом Карлссоном и Полом Грингардом получил Нобелевскую премию по физиологии и медицине за открытие…",
+				answer1: "молекулярного механизма формирования памяти",
+				answer2: "механизма циркадных ритмов",
+				answer3: "функциональных различий между отдельными нервными волокнами",
+				answer4: "клеток, составляющих систему позиционирования в головном мозге",
+				correctAnswer: 1,
+				image: "img/que1.jpg",
+				comment1: "Именно! Кандел продемонстрировал, что кратковременная и долговременная память расположена в синапсах между нейронами: слабые стимулы приводят к формированию краткосрочной памяти, а более сильные вызывают увеличение чувствительности рецепторов и количества нейромедиаторов, что приводит к формированию долговременной памяти.",
+				comment2: "Ошибка. Это совсем свежее открытие 2017 года, а Эрик Кандел обнаружил молекулярный механизм формирования памяти при помощи усиления связи между синапсами за счет повышения чувствительности рецепторов и увеличения количества медиаторов. ",
+				comment3: "Неверно, это открытие принадлежит Герберту Гассеру и Джозефу Эрлангеру, и премию им присудили в 1944 году. Кандел же обнаружил молекулярный механизм формирования памяти при помощи усиления связи между синапсами за счет повышения чувствительности рецепторов и увеличения количества медиаторов.",
+				comment4: "Нет, это открытие 2014 года, а Кандел открыл молекулярный механизм формирования памяти при помощи усиления связи между синапсами за счет повышения чувствительности рецепторов и увеличения количества медиаторов."
+			}, 
+			{
+				text: "Мы выяснили, что Эрик Кандел занимался нервными клетками. Как вы думаете, какой он выбрал модельный объект для своих исследований?",
+				answer1: "Кальмара! У него огромные нервные клетки.",
+				answer2: "Аплизию, или морского зайца.",
+				answer3: "Что-нибудь простое. Мушки-дрозофилы?",
+				answer4: "Наверняка мышь, ведь у млекопитающих сложная нервная система.",
+				correctAnswer: 2,
+				image: "img/que2.jpg",
+				comment1: "У кальмара действительно большие отростки нейронов, на которых удобно изучать потенциал действия при передаче нервного сигнала. Однако, Кандел остановился на морских зайцах, или аплизиях.",
+				comment2: "Верно! Что это за странное создание? Об этом наш следующий вопрос =)",
+				comment3: "Генетики сейчас обиделись. Потому что, во-первых, мушка – классический (и очень сложный!) объект генетических исследований, а во-вторых, Кандел использовал не её. Его модельным объектом служит аплизия, или морской заяц.",
+				comment4: "Пожалуй, чересчур сложная. Кандел пытался вначале ставить эксперименты на млекопитающих, но понял, что это условия слишком сложны, чтобы обеспечить понимание основных процессов памяти. Поэтому взял в качестве модельного объекта аплизию – симпатичное морское животное."
+			},
+			{
+				text: "Итак, в качестве объекта для своих исследований Эрик Кандел выбрал существо под названием аплизия, или морской заяц. Знаете ли вы, к какому типу живых существ относится это морское животное?",
+				answer1: "черви",
+				answer2: "моллюски",
+				answer3: "кишечнополостные",
+				answer4: "иглокожие",
+				correctAnswer: 2,
+				image: "img/que3.jpg",
+				comment1: "Неверно! Аплизия – это моллюск, и к кольчатым, плоским и круглым червям отношения не имеет.",
+				comment2: "Верно! Аплизия -  один из крупнейших представителей заднежаберных моллюсков с крайне примечательной нервной системой: около 20 000 очень крупных нервных клеток морского зайца окрашены в разные цвета, что делает это животное удобным модельным объектом.",
+				comment3: "Не угадали. Кишечнополостные – более просто устроенные организмы, к которым относят медуз, гидру и коралловые полипы. А аплизия – это моллюск.",
+				comment4: "Неверно, к иглокожим относят морских ежей и звезд. Аплизия же – заднежаберный моллюск."
+			},
+			{
+				text: "В 2016 году Кандел пописал письмо, адресованное Greenpeace и ООН, в котором призывалось…",
+				answer1: "дезактивировать ядерное оружие по всему миру",
+				answer2: "решить проблему глобального потепления",
+				answer3: "остановить борьбу с генетически модифицированными организмами",
+				answer4: "прекратить уничтожение тропических лесов",
+				correctAnswer: 3,
+				image: "img/que4.jpg",
+				comment1: "Не совсем. В этом сложном споре Кандел замечен не был, а вот с противниками ГМО он боролся. В том числе, подписью под обращением к вышеназванным организациям.",
+				comment2: "Проблема важная. Однако Кандела в тот год беспокоила борьба правительств мира с ГМО, ведь доказано, что генномодифицированные продукты не только дешевы, но и безопасны.",
+				comment3: "Именно эта проблема была освещена в том письме, которое подписал Эрик Кандел. Так держать!",
+				comment4: "Эта экологическая проблема пока не освещалась Эриком Канделом. Ученый подписывал письмо с призывом остановить борьбу в генномодифицированными организмами."
+			},
+			{
+				text: "Эрик Кандел в начале своей научной деятельности интересовался вовсе не биологией. Он защитил магистерскую диссертацию в Гарварде по…",
+				answer1: "истории и литературе",
+				answer2: "музыке",
+				answer3: "социологии",
+				answer4: "лингвистике",
+				correctAnswer: 1,
+				image: "img/que5.jpg",
+				comment1: "Все верно! Кандел написал диплом с отличием на тему «Отношение к национал-социализму трех немецких писателей: Карл Цукмайер, Ханс Каросса и Эрнст Юнгер».",
+				comment2: "Почти, но нет. С искусством Кандел связан, но не степенью магистра. Диплом он защищал по специальности «история и литература» на тему Отношение к национал-социализму трех немецких писателей: Карл Цукмайер, Ханс Каросса и Эрнст Юнгер».",
+				comment3: "Неверно. Увлечением Кандела была история и литература. Диплом он защищал по специальности «история и литература» на тему Отношение к национал-социализму трех немецких писателей: Карл Цукмайер, Ханс Каросса и Эрнст Юнгер».",
+				comment4: "Близко, но нет. Увлечением Кандела была история и литература. Диплом он защищал по специальности «история и литература» на тему Отношение к национал-социализму трех немецких писателей: Карл Цукмайер, Ханс Каросса и Эрнст Юнгер»."
+			},
+			{
+				text: "Кандел известен еще и тем, что был знатоком модернистского искусства. Каким образом ученый увековечил себя на этом поприще?",
+				answer1: "Собрал частную коллекцию картин в стиле модерн",
+				answer2: "Сам писал картины в этом стиле",
+				answer3: "Подрабатывал критиком-искусствоведом",
+				answer4: "Написал книгу на эту тему",
+				correctAnswer: 4,
+				image: "img/que6.jpg",
+				comment1: "Нет, это не так. Кандел написал книгу «Век самопознания. Поиски бессознательного в искусстве и науке с начала XX века до наших дней», ведь помимо искусства Кандел был поклонником теории психоанализа Зигмунда Фрейда. Хотя, на обложке одного из изданий изображена картина Густава Климта.",
+				comment2: "Нет, это не так. Кандел написал книгу «Век самопознания. Поиски бессознательного в искусстве и науке с начала XX века до наших дней», ведь помимо искусства Кандел был поклонником теории психоанализа Зигмунда Фрейда. Хотя, на обложке одного из изданий изображена картина Густава Климта.",
+				comment3: "Нет, это не так. Кандел написал книгу «Век самопознания. Поиски бессознательного в искусстве и науке с начала XX века до наших дней», ведь помимо искусства Кандел был поклонником теории психоанализа Зигмунда Фрейда. Хотя, на обложке одного из изданий изображена картина Густава Климта.",
+				comment4: "Абсолютно верно! Книга называется «Век самопознания. Поиски бессознательного в искусстве и науке с начала XX века до наших дней», ведь помимо искусства Кандел был поклонником теории психоанализа Зигмунда Фрейда."
+			},
+		];
+
+		//Счетчик 
+		var counter = 0;
+		//Всего вопросов
+		var total = questions.length -1;
+
+		//Флаг для отключения инвета при клике на ответ
+		answer1.setAttribute('isDisabled', false);
+		answer2.setAttribute('isDisabled', false);
+		answer3.setAttribute('isDisabled', false);
+		answer4.setAttribute('isDisabled', false);
+		//Флаг правильности
+		answer1.setAttribute('isCorrect', true);
+		answer2.setAttribute('isCorrect', false);
+		answer3.setAttribute('isCorrect', false);
+		answer4.setAttribute('isCorrect', false);
+		//Отключаем инпут на кнопке
+		btn.disabled = true;
+
+		//Запускаем приветствие
+		welcome();
+
+		//Запускается при клике на ответ, если не заблокирован инпут. Аргумент - параграф выбранного ответа.
+		function checkAnswer(answer) {
+			//проверка блока инпута (только для 1 ответа, так как они блокируются все разом)
+			if (!answer1.isDisabled){
+				//флаг, что ответ выбран
+				answerSelected = true;
+				//Выключаем инпут
+				toogleInput();
+				//Проверяем правильность
+				if (answer.getAttribute('isCorrect') == 'true') {
+					//увеличиваем счет и окрашиваем зеленым
+					score++;
+					answer.style.backgroundColor = '#00ee76';
+				} else {
+					//окаршиваем красным
+					answer.style.backgroundColor = '#fa8072';
+				}
+				//показываем комментарий
+				showComment(counter, answer);
+				//Увеличиваем счетчик
+				counter++;
+				//Включаем инпут кнопки "Дальше"
+				toogleButton();
+			}
+		}
+
+		//Меняем вопрос на следующий
+		function changeQuestion() {
+			
+			//если вопросы не кончились
+			if (counter <= total){
+				//меняем тексты
+				changeText(counter);
+				//задаем правильный ответ
+				setCorrectAnswer(counter);
+			} 
+			//если вопросы кончились
+			else if (counter > total){
+				//показываем результат
+				showResults();
+			}
+			//Выключаем выбранность ответа
+			answerSelected = false;
+			//Включаем инпут
+			toogleInput();
+			//Выключаем кнопку
+			toogleButton();
+			//Восстанавливаем цвета
+			resetColor(answer1);
+			resetColor(answer2);
+			resetColor(answer3);
+			resetColor(answer4);
+			//прокручиваем страницу наверх
+			window.scrollTo(0, 0);
+		}
+
+		//Меняем тексты везде. Аргумент - счетчик.
+		function changeText(counter) {
+			//Меняем изображение
+			image.src = questions[counter].image;
+			//Меняем текст вопроса
+			quest.innerHTML = questions[counter].text;
+			//Меняем текст ответов
+			firstAnswerText.innerHTML = questions[counter].answer1;
+			secondAnswerText.innerHTML = questions[counter].answer2;
+			thirdAnswerText.innerHTML = questions[counter].answer3;
+			forthAnswerText.innerHTML = questions[counter].answer4;
+			//Увеличиваем счет вопросов
+			topHeaderCount++;
+			//Меняем текст счета вопросов
+			topHeader.innerHTML = topHeaderCount + "/" + questions.length;
+		}
+
+		//Устанавливаем правильный ответ
+		function setCorrectAnswer(counter) {
+			if (questions[counter].correctAnswer == 1) {
+				answer1.setAttribute('isCorrect', true);
+				answer2.setAttribute('isCorrect', false);
+				answer3.setAttribute('isCorrect', false);
+				answer4.setAttribute('isCorrect', false);
+			} else if (questions[counter].correctAnswer == 2) {
+				answer1.setAttribute('isCorrect', false);
+				answer2.setAttribute('isCorrect', true);
+				answer3.setAttribute('isCorrect', false);
+				answer4.setAttribute('isCorrect', false);
+			} else if (questions[counter].correctAnswer == 3) {
+				answer1.setAttribute('isCorrect', false);
+				answer2.setAttribute('isCorrect', false);
+				answer3.setAttribute('isCorrect', true);
+				answer4.setAttribute('isCorrect', false);
+			} else if (questions[counter].correctAnswer == 4) {
+				answer1.setAttribute('isCorrect', false);
+				answer2.setAttribute('isCorrect', false);
+				answer3.setAttribute('isCorrect', false);
+				answer4.setAttribute('isCorrect', true);
+			}
+		}
+		//Вкл\выкл инпут на ответах
+		function toogleInput() {
+			if (!answer1.isDisabled){
+				answer1.isDisabled = true;
+				answer2.isDisabled = true;
+				answer3.isDisabled = true;
+				answer4.isDisabled = true;	
+			} else if (answer1.isDisabled){
+				answer1.isDisabled = false;
+				answer2.isDisabled = false;
+				answer3.isDisabled = false;
+				answer4.isDisabled = false;	
+			}
+		}
+		//Вкл\выкл инпут на кнопке
+		function toogleButton() {
+			if(!btn.disabled){
+				btn.disabled = true;
+			} else if (btn.disabled){
+				btn.disabled = false;
+			}
+		}
+		//подсвечиваем ответ при наведении курсора, если не заблокирован инпут
+		function highlight(answer) {
+			if (!answer.isDisabled){
+				answer.style.backgroundColor = '#eee9e9';
+			}
+		}
+		//Восстанавливаем цвет ответа, если он не выбран
+		function resetColor(answer) {
+			if (!answerSelected){
+				answer.style.backgroundColor = '#fffafa';
+			}
+		}
+		//Показываем комментарий. Аргументы - счетчик и параграф ответа.
+		function showComment(counter, answer){
+			//Меняем текст вопроса на текст комментария
+			if (answer == answer1){
+				firstAnswerText.innerHTML = questions[counter].comment1;
+			} else if (answer == answer2) {
+				secondAnswerText.innerHTML = questions[counter].comment2;
+			} else if (answer == answer3) {
+				thirdAnswerText.innerHTML = questions[counter].comment3;
+			} else if (answer == answer4) {
+				forthAnswerText.innerHTML = questions[counter].comment4;
+			}
+		}
+		//Показываем результат
+		function showResults() {
+			//Убираем контейнер теста
+			main.style.display = 'none';
+			//создаем контейнер результатов
+			var resultDiv = document.createElement("div");
+			//задаем ID
+			resultDiv.setAttribute("id", "results");
+			//создаем картинку для результатов
+			var resultImg = document.createElement("img");
+			
+			//создаем параграф для авторов
+			var credit = document.createElement("p");
+			credit.setAttribute("id", "credits");
+
+			//Параграф для текста результата
+			var resultText = document.createElement("p");
+			//Хэдер для счета
+			var resultScore = document.createElement("h1");
+			resultScore.setAttribute("id", "h1Score");
+			//Кнопка "начать сначала"
+			var resultButton = document.createElement("button");
+			//Переменные для текстов внутри элементов
+			var resultTextContent;
+			var resultScoreContent;
+			//Хэдер для подписи к набранному счету
+			var resultScoreParagraph = document.createElement("h2");
+			var resultScoreParagraphText;
+			var creditsTextContent = document.createTextNode(creditsText);
+
+			//переводим счет в проценты, вводим небольшую случайность
+			var finalScore = score * 10;
+			if (finalScore < 100) {
+				//+0..+2%
+				finalScore += Math.floor(Math.random()*2);
+			}
+
+			//Проверяем счет, три варианта результатов
+			if (finalScore <= 33) {
+				//меняем картинку
+				resultImg.src = "img/win1.jpg";
+				//добавляем текст
+				resultTextContent = document.createTextNode(resultsMessageLow);
+				//добавляем счет
+				resultScoreContent = document.createTextNode(finalScore + "%");
+				//Добавляем подпись к счету
+				resultScoreParagraphText = document.createTextNode(resultsProcentMessageLow)
+			} else if (finalScore > 33 && finalScore <= 66){
+				resultImg.src = "img/win2.jpg";
+				resultTextContent = document.createTextNode(resultsMessageMedium);
+				resultScoreContent = document.createTextNode(finalScore + "%");
+				resultScoreParagraphText = document.createTextNode(resultsProcentMessageMedium)
+			} else if (finalScore > 66) {
+				resultImg.src = "img/win3.jpg";
+				resultTextContent = document.createTextNode(resultsMessageHigh);
+				resultScoreContent = document.createTextNode(finalScore + "%");
+				resultScoreParagraphText = document.createTextNode(resultsProcentMessageHigh)
+			}
+			//Текст кнопки
+			var resultButtonContent = document.createTextNode("Пройти еще раз");
+			//Прикрепляем всё.
+			resultButton.appendChild(resultButtonContent);
+			resultText.appendChild(resultTextContent);
+			resultScore.appendChild(resultScoreContent);
+			resultScoreParagraph.appendChild(resultScoreParagraphText);
+			credit.appendChild(creditsTextContent);
+
+			//Суем в body
+			document.body.appendChild(resultDiv);
+			resultDiv.appendChild(resultScore);
+			resultDiv.appendChild(resultScoreParagraph);
+			resultDiv.appendChild(resultImg);
+			resultDiv.appendChild(resultText);
+			resultDiv.appendChild(resultButton);
+			resultDiv.appendChild(credit);
+			//Добавляем ивент на кнопку
+			resultButton.addEventListener("click", restartTest);
+		}
+
+		//Перезапуск теста
+		function restartTest() {
+			//Прокручиваем страницу наверх
+			window.scrollTo(0,0);
+			//Включаем контейнер теста
+			main.style.display = "flex";
+			//Выключаем\удаляем контейнер приветствия\результатов, если есть.
+			if (document.getElementById("results")) {
+				document.body.removeChild(results);
+			}
+
+			if (document.getElementById("welcome")) {
+				document.getElementById("welcome").style.display = "none";
+			}
+			//обнуляем счетчик и очки, меняем тексты, назначаем правильный ответ
+			counter = 0;
+			changeText(counter);
+			score = 0;
+			setCorrectAnswer(counter);
+			topHeaderCount = 1;
+			topHeader.innerHTML = topHeaderCount + "/" + questions.length;
+		}
+		//Начальный экран
+		function welcome() {
+			//Прячем контейнер теста
+			main.style.display = 'none';
+			//создаем контейнер приветствия
+			var welcomeDiv = document.createElement("div");
+			welcomeDiv.setAttribute("id", "welcome");
+			//создаем картинку приветствия
+			var welcomeImg = document.createElement("img");
+			welcomeImg.src = "img/welcome1.jpg";
+
+			//Создаем все элементы и тексты к ним
+			var welcomeHeader = document.createElement("h2");
+			var welcomeText1 = document.createElement("p");
+			var welcomeText2 = document.createElement("p");
+			var welcomeText3 = document.createElement("p");
+			var welcomeButton = document.createElement("button");
+			var welcomeHeaderText = document.createTextNode("Чем знаменит Эрик Кандел?");
+			var welcomeTextContent1 = document.createTextNode(welcomeMessage1);
+			var welcomeTextContent2 = document.createTextNode(welcomeMessage2);
+			var welcomeTextContent3 = document.createTextNode(welcomeMessage3);
+			var welcomeButtonContent = document.createTextNode("Начать тест");
+
+			//Прикрепляем всё.
+			welcomeButton.appendChild(welcomeButtonContent);
+			welcomeHeader.appendChild(welcomeHeaderText);
+			welcomeText1.appendChild(welcomeTextContent1);
+			welcomeText2.appendChild(welcomeTextContent2);
+			welcomeText3.appendChild(welcomeTextContent3);
+			
+			
+			//Суем в body
+			document.body.appendChild(welcomeDiv);
+			welcomeDiv.appendChild(welcomeHeader);
+			welcomeDiv.appendChild(welcomeText1);
+			welcomeDiv.appendChild(welcomeImg);
+			welcomeDiv.appendChild(welcomeText2);
+			welcomeDiv.appendChild(welcomeText3);
+			welcomeDiv.appendChild(welcomeButton);
+			//Добавляем ивент на кнопку
+			welcomeButton.addEventListener("click", restartTest);
+		}
+
+	</script>
+</body>
+</html>
